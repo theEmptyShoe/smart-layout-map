@@ -26,21 +26,37 @@ body {
     overflow: hidden;
 }
 
-/* ── SIDEBAR ─────────────────────────────────────────── */
-
 #sidebar {
     width: 280px;
-    min-width: 280px;
+    min-width: 200px;
+    max-width: 520px;
     background: var(--panel);
-    border-right: 1px solid var(--panel-border);
+    border-right: none;
     display: flex;
     flex-direction: column;
     z-index: 1000;
     overflow-y: auto;
+    flex-shrink: 0;
+}
+
+#sidebar-resize {
+    width: 5px;
+    background: var(--panel-border);
+    cursor: col-resize;
+    flex-shrink: 0;
+    transition: background 0.15s;
+    position: relative;
+    z-index: 1001;
+}
+
+#sidebar-resize:hover,
+#sidebar-resize.resizing {
+    background: var(--blue);
+    opacity: 0.5;
 }
 
 .sidebar-header {
-    padding: 24px 20px 16px;
+    padding: 20px 20px 14px;
     border-bottom: 1px solid var(--panel-border);
 }
 
@@ -70,8 +86,6 @@ body {
     color: var(--muted);
     line-height: 1.5;
 }
-
-/* ── STATS ───────────────────────────────────────────── */
 
 .stats-row {
     display: grid;
@@ -106,8 +120,6 @@ body {
 .stat-card .value.amber { color: var(--amber); }
 .stat-card .value.blue  { color: var(--blue);  }
 
-/* ── SECTION LABEL ───────────────────────────────────── */
-
 .section-label {
     font-size: 10px;
     font-weight: 600;
@@ -117,13 +129,11 @@ body {
     padding: 16px 20px 8px;
 }
 
-/* ── LAYER ITEMS ─────────────────────────────────────── */
-
 .layer-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 20px;
+    padding: 9px 20px;
     cursor: pointer;
     transition: background 0.15s;
 }
@@ -151,10 +161,6 @@ body {
     color: var(--muted);
     margin-top: 1px;
 }
-
-/* ── TOGGLE SWITCH ───────────────────────────────────── */
-/* Uses a real .knob child element instead of ::after
-   so html2canvas renders it correctly in exports       */
 
 .toggle {
     width: 32px;
@@ -193,8 +199,6 @@ body {
 .toggle.on.grey  { background: #2a2f35; }
 .toggle.on.grey  .knob { transform: translateX(14px); background: #8b949e;      }
 
-/* ── NDVI LEGEND ─────────────────────────────────────── */
-
 .ndvi-legend {
     margin: 8px 20px 16px;
     background: var(--bg);
@@ -225,8 +229,6 @@ body {
     font-size: 10px;
     color: var(--muted);
 }
-
-/* ── TOOLS ───────────────────────────────────────────── */
 
 .tools-grid {
     display: grid;
@@ -267,8 +269,6 @@ body {
     color: var(--amber);
     line-height: 1.5;
 }
-
-/* ── SHAPES LIST ─────────────────────────────────────── */
 
 #shapes-list {
     padding: 0 20px 16px;
@@ -318,8 +318,6 @@ body {
 .shape-btn.vis:hover { background: #21262d; color: var(--blue); }
 .shape-btn.del:hover { background: #3d1212; color: var(--red); border-color: var(--red); }
 
-/* ── FOOTER ──────────────────────────────────────────── */
-
 .sidebar-footer {
     margin-top: auto;
     padding: 16px 20px;
@@ -329,14 +327,10 @@ body {
     line-height: 1.6;
 }
 
-/* ── MAP ─────────────────────────────────────────────── */
-
 #map {
     flex: 1;
     background: var(--bg);
 }
-
-/* ── LEAFLET OVERRIDES ───────────────────────────────── */
 
 .leaflet-container {
     background: #161b22 !important;
@@ -375,6 +369,7 @@ body {
 .popup-badge.building { background: #0d2040; color: var(--blue);  }
 .popup-badge.park     { background: #1a4228; color: var(--green); }
 .popup-badge.natural  { background: #21262d; color: #8b949e;      }
+.popup-badge.amenity  { background: #1a1e30; color: #a5c4ff;      }
 
 .leaflet-control-zoom {
     border: 1px solid #30363d !important;
@@ -403,8 +398,6 @@ body {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
 }
-
-/* ── GPS DOT ─────────────────────────────────────────── */
 
 .gps-dot {
     width: 12px;

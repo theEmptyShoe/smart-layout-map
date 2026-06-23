@@ -207,8 +207,7 @@ async function loadRoads() {
         }
     ).addTo(roadLayer);
 
-    document.getElementById("road-count").textContent =
-        clipped.length;
+
 }
 
 async function loadBuildings() {
@@ -241,7 +240,7 @@ async function loadBuildings() {
 
     }).addTo(buildingLayer);
 
-    document.getElementById("building-count").textContent = geojson.features.length;
+
 }
 
 async function loadAmenities() {
@@ -286,7 +285,7 @@ async function loadAmenities() {
 
     }).addTo(amenityLayer);
 
-    document.getElementById("amenity-count").textContent = geojson.features.length;
+
 }
 
 async function loadParks() {
@@ -320,7 +319,7 @@ async function loadParks() {
 
     }).addTo(parkLayer);
 
-    document.getElementById("park-count").textContent = geojson.features.length;
+
 }
 
 async function loadNatural() {
@@ -389,4 +388,37 @@ function toggleLayer(id) {
             err
         );
     }
+})();
+
+/* ── SIDEBAR RESIZE ───────────────────────────────────── */
+(function () {
+    const sidebar = document.getElementById("sidebar");
+    const handle  = document.getElementById("sidebar-resize");
+    if (!sidebar || !handle) return;
+
+    let dragging = false;
+
+    handle.addEventListener("mousedown", e => {
+        dragging = true;
+        handle.classList.add("resizing");
+        document.body.style.cursor      = "col-resize";
+        document.body.style.userSelect  = "none";
+        e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", e => {
+        if (!dragging) return;
+        const w = Math.max(200, Math.min(520, e.clientX));
+        sidebar.style.width    = w + "px";
+        sidebar.style.minWidth = w + "px";
+        map.invalidateSize();
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (!dragging) return;
+        dragging = false;
+        handle.classList.remove("resizing");
+        document.body.style.cursor     = "";
+        document.body.style.userSelect = "";
+    });
 })();

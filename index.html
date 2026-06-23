@@ -12,28 +12,8 @@
 <body>
     <div id="sidebar">
         <div class="sidebar-header">
-            <span class="tag">SAP — Green Audit</span>
             <h1>Royal Park Residency</h1>
-            <p>J.P. Nagar 9th Phase, Bangalore<br>Interactive green cover &amp; navigation map</p>
-        </div>
-
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="label">Buildings</div>
-                <div class="value blue" id="building-count">…</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Roads</div>
-                <div class="value amber" id="road-count">…</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Parks</div>
-                <div class="value" id="park-count">…</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Area (ha)</div>
-                <div class="value">~42</div>
-            </div>
+            <p>J.P. Nagar 9th Phase, Bangalore</p>
         </div>
 
         <div class="section-label">Map Layers</div>
@@ -42,7 +22,6 @@
             <div class="layer-dot" style="background: #3fb950;"></div>
             <div class="layer-info">
                 <div class="name">Green Cover (NDVI)</div>
-                <div class="desc">Vegetation heatmap from satellite</div>
             </div>
             <div class="toggle green on" id="toggle-ndvi"><span class="knob"></span></div>
         </div>
@@ -51,7 +30,6 @@
             <div class="layer-dot" style="background: #3fb950; opacity:0.6;"></div>
             <div class="layer-info">
                 <div class="name">Parks &amp; Leisure</div>
-                <div class="desc">Green spaces from OSM</div>
             </div>
             <div class="toggle green on" id="toggle-parks"><span class="knob"></span></div>
         </div>
@@ -60,16 +38,14 @@
             <div class="layer-dot" style="background: #8b949e;"></div>
             <div class="layer-info">
                 <div class="name">Natural Features</div>
-                <div class="desc">Rock outcrops, bare land</div>
             </div>
-            <div class="toggle grey on" id="toggle-natural"></div>
+            <div class="toggle grey on" id="toggle-natural"><span class="knob"></span></div>
         </div>
 
         <div class="layer-item" onclick="toggleLayer('buildings')">
             <div class="layer-dot" style="background: #58a6ff;"></div>
             <div class="layer-info">
                 <div class="name">Buildings</div>
-                <div class="desc">Mapped structures from OSM</div>
             </div>
             <div class="toggle blue on" id="toggle-buildings"><span class="knob"></span></div>
         </div>
@@ -78,7 +54,6 @@
             <div class="layer-dot" style="background: #d29922;"></div>
             <div class="layer-info">
                 <div class="name">Roads &amp; Paths</div>
-                <div class="desc">Internal layout roads</div>
             </div>
             <div class="toggle amber on" id="toggle-roads"><span class="knob"></span></div>
         </div>
@@ -87,7 +62,6 @@
             <div class="layer-dot" style="background: #f85149;"></div>
             <div class="layer-info">
                 <div class="name">Layout Boundary</div>
-                <div class="desc">Outer perimeter</div>
             </div>
             <div class="toggle red on" id="toggle-boundary"><span class="knob"></span></div>
         </div>
@@ -114,13 +88,12 @@
         <div id="shapes-list"></div>
 
         <div class="sidebar-footer">
-            Data collected: 2025–26<br>
-            Satellite imagery: Sentinel-2 (ESA)<br>
-            Road &amp; building data: OpenStreetMap<br>
-            Built for Social Action Project
+            Field survey 2025–26 · Social Action Project<br>
+            Sentinel-2 (ESA) · OpenStreetMap
         </div>
     </div>
 
+    <div id="sidebar-resize" title="Drag to resize"></div>
     <div id="map"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
