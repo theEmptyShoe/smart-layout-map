@@ -1,0 +1,198 @@
+// ─────────────────────────────────────────────────────────────
+// ROYAL PARK RESIDENCY - FULL EARTH ENGINE PROJECT SCRIPT
+// Includes:
+// 1. True Color Satellite View
+// 2. NDVI Green Cover
+// 3. Built-up Detection
+// 4. Water Detection
+// 5. Tree Cover Estimate
+// 6. Area Statistics
+// 7. Export Ready Layers
+// ─────────────────────────────────────────────────────────────
+
+
+// ─── BOUNDARY ────────────────────────────────────────────────
+
+var roi = ee.Geometry.Polygon([
+[
+[77.5658101882126,12.867786595580867],
+[77.5644785081625,12.868120188101855],
+[77.56329753684639,12.86833153988772],
+[77.56173431877625,12.868559577141838],
+[77.56158598421473,12.867886588552395],
+[77.5610496977236,12.86611789918922],
+[77.56067315614524,12.866212452080816],
+[77.56010263860207,12.866323690730852],
+[77.55954923658385,12.866484986686018],
+[77.55944403094469,12.866430576300445],
+[77.55929244601174,12.865906632340995],
+[77.55905460032966,12.865043232138305],
+[77.55890760888127,12.864452112528511],
+[77.55869171512364,12.86395318934494],
+[77.55876521084781,12.863881538246218],
+[77.5593439896769,12.86372927959306],
+[77.55998806755753,12.863502074177333],
+[77.56048875717943,12.863278164022091],
+[77.56094351197339,12.86309903575497],
+[77.56121452745685,12.863009471572681],
+[77.56154066473437,12.862839299539289],
+[77.56185291830946,12.862701787561477],
+[77.56218146915063,12.862344302608761],
+[77.56251588696921,12.862232767199586],
+[77.56279456848443,12.862175569534017],
+[77.5630380481266,12.862221327667129],
+[77.56303511365354,12.862430099596736],
+[77.56334019657663,12.862418660073246],
+[77.56382715585681,12.862332863634663],
+[77.56402076617502,12.862247067165711],
+[77.56413517226963,12.862187009620897],
+[77.56451652592443,12.862567373831652],
+[77.56492428098511,12.863019234325165],
+[77.5650826797654,12.863222280236158],
+[77.56564884326713,12.864366226290116],
+[77.56571924701734,12.86489815942845],
+[77.56571631439431,12.865169845678238],
+[77.56566937856013,12.865450110768734],
+[77.56559897480992,12.865653159770304],
+[77.56542296758028,12.866084997134834],
+[77.56527335960851,12.86638242021695],
+[77.56524989169043,12.866628365960722],
+[77.56531736195296,12.866845713161283],
+[77.56561071091693,12.867337603499081],
+[77.56572805050337,12.867572109017786],
+[77.5658101882126,12.867786595580867]
+]
+]);
+
+Map.centerObject(roi, 17);
+
+
+// ─── SENTINEL-2 IMAGE ────────────────────────────────────────
+
+function maskS2Clouds(image) {
+  var scl = image.select('SCL');
+  var cloudMask = scl.neq(3)   // cloud shadow
+    .and(scl.neq(8))           // cloud medium probability
+    .and(scl.neq(9))           // cloud high probability
+    .and(scl.neq(10))          // thin cirrus
+    .and(scl.neq(11));         // snow
+
+  return image.updateMask(cloudMask).divide(10000);
+}
+
+var s2 = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+  .filterBounds(roi)
+  .filterDate('2024-01-01', '2024-12-31')
+  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 30))
+  .map(maskS2Clouds)
+  .select(['B2', 'B3', 'B4', 'B8', 'B11', 'SCL']);
+
+var image = s2.median().clip(roi);
+
+
+// ─── TRUE COLOR ──────────────────────────────────────────────
+
+Map.addLayer(image, {
+bands: ['B4','B3','B2'],
+min: 0,
+max: 3000
+}, 'Satellite');
+
+
+// ─── NDVI GREEN COVER ────────────────────────────────────────
+
+var ndvi = image.normalizedDifference(['B8','B4']).rename('NDVI');
+
+Map.addLayer(ndvi, {
+min: 0,
+max: 0.8,
+palette: ['brown','yellow','lightgreen','green','darkgreen']
+}, 'Green Cover NDVI');
+
+
+// ─── BUILT UP AREA (NDBI) ────────────────────────────────────
+
+var ndbi = image.normalizedDifference(['B11','B8']).rename('NDBI');
+
+Map.addLayer(ndbi, {
+min: -0.3,
+max: 0.4,
+palette: ['green','yellow','red']
+}, 'Built-up');
+
+
+// ─── WATER DETECTION (NDWI) ──────────────────────────────────
+
+var ndwi = image.normalizedDifference(['B3','B8']).rename('NDWI');
+
+Map.addLayer(ndwi, {
+min: -0.5,
+max: 0.5,
+palette: ['brown','white','blue']
+}, 'Water');
+
+
+// ─── TREE MASK ───────────────────────────────────────────────
+
+var trees = ndvi.gt(0.45).selfMask();
+
+Map.addLayer(trees, {
+palette: ['00ff00']
+}, 'Estimated Trees');
+
+
+// ─── AREA CALCULATIONS ───────────────────────────────────────
+
+var areaImage = ee.Image.pixelArea();
+
+var treeArea = areaImage.updateMask(trees).reduceRegion({
+reducer: ee.Reducer.sum(),
+geometry: roi,
+scale: 10,
+maxPixels: 1e13
+});
+
+var totalArea = areaImage.reduceRegion({
+reducer: ee.Reducer.sum(),
+geometry: roi,
+scale: 10,
+maxPixels: 1e13
+});
+
+var treeSqm = ee.Number(treeArea.get('area'));
+var totalSqm = ee.Number(totalArea.get('area'));
+
+var percent = treeSqm.divide(totalSqm).multiply(100);
+
+print('Total Area (sq m):', totalSqm);
+print('Estimated Tree Cover (sq m):', treeSqm);
+print('Estimated Tree Cover %:', percent);
+
+
+// ─── BOUNDARY DISPLAY ────────────────────────────────────────
+
+Map.addLayer(roi, {
+color: 'red'
+}, 'Boundary');
+
+
+// ─── EXPORT NDVI IMAGE ───────────────────────────────────────
+
+Export.image.toDrive({
+image: ndvi,
+description: 'RoyalPark_NDVI',
+region: roi,
+scale: 10,
+maxPixels: 1e13
+});
+
+
+// ─── EXPORT TREE MASK ────────────────────────────────────────
+
+Export.image.toDrive({
+image: trees,
+description: 'RoyalPark_TreeMask',
+region: roi,
+scale: 10,
+maxPixels: 1e13
+});

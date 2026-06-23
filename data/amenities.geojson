@@ -1,0 +1,461 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5655782,
+          12.8694872
+        ]
+      },
+      "properties": {
+        "amenity": "bank",
+        "brand:wikidata": "Q1340361",
+        "brand:wikipedia": "en:State Bank of India",
+        "name": "State Bank of India",
+        "name:kn": "ಭಾರತೀಯ ಸ್ಟೇಟ್ ಬ್ಯಾಂಕ್",
+        "short_name": "SBI",
+        "website": "https://www.sbi.co.in"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5703418,
+          12.8593715
+        ]
+      },
+      "properties": {
+        "addr:city": "Bangalore",
+        "addr:postcode": "560062",
+        "amenity": "place_of_worship",
+        "name": "Chamundeshwari Temple",
+        "name:kn": "ಚಾಮುಂಡೇಶ್ವರಿ ದೇವಸ್ಥಾನ",
+        "religion": "hindu"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5641166,
+          12.8620102
+        ]
+      },
+      "properties": {
+        "addr:place": "Anjanapura",
+        "amenity": "school",
+        "isced:level": "2",
+        "name": "GHPS Anjanapura",
+        "name:kn": "ಸರ್ಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ ಆಂಜನಪುರ",
+        "operator": "Department of Education",
+        "school": "primary"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.576942,
+          12.8572549
+        ]
+      },
+      "properties": {
+        "addr:place": "Kembathhalli",
+        "amenity": "school",
+        "isced:level": "2",
+        "name": "GHPS Kembathhalli",
+        "name:kn": "ಸರ್ಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ ಕೆಂಭತ್ ಹಳ್ಳಿ",
+        "operator": "Department of Education",
+        "school": "primary"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5815146,
+          12.8655347
+        ]
+      },
+      "properties": {
+        "addr:place": "Jambusavari Dinne",
+        "amenity": "school",
+        "isced:level": "2",
+        "name": "GHPS Jambusavari Dinne",
+        "name:kn": "ಸರ್ಕಾರಿ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ ಜಂಬುಸವಾರಿ ದಿಣ್ಣೆ",
+        "operator": "Department of Education",
+        "school": "primary"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5626375,
+          12.8586411
+        ]
+      },
+      "properties": {
+        "addr:place": "Anjanapura",
+        "amenity": "school",
+        "isced:level": "3",
+        "name": "Florence Public School 4th Blk, Anjanapura",
+        "name:kn": "ಫ್ಲಾರೆನ್ಸ್ ಪಬ್ಲಿಕ್ ಶಾಲೆ ೪ನೇ ಬ್ಲಾಕ್, ಆಂಜನಾಪುರ",
+        "operator": "Private Un-Aided",
+        "school": "Higher Secondary"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5677765,
+          12.8598087
+        ]
+      },
+      "properties": {
+        "addr:place": "Anjanapura",
+        "amenity": "school",
+        "isced:level": "3",
+        "name": "Mvs HPS, Anjanapura",
+        "name:kn": "ಎಂ.ವಿ.ಎಸ್ ಹಿರಿಯ ಪ್ರಾಥಮಿಕ ಶಾಲೆ ,ಆಂಜನಾಪುರ",
+        "operator": "Private Un-Aided",
+        "school": "Higher secondary"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5744133,
+          12.8732088
+        ]
+      },
+      "properties": {
+        "addr:place": "Kothanur",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "Sri Sarathy English School, Kothanur",
+        "name:kn": "ಶ್ರೀ ಸಾರಥಿ ಆಂಗ್ಲ ಶಾಲೆ,ಕೊತ್ತನೂರು",
+        "operator": "Private Un-Aided",
+        "school": "primary"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5841946,
+          12.8686079
+        ]
+      },
+      "properties": {
+        "addr:place": "Kothanur",
+        "amenity": "school",
+        "isced:level": "2",
+        "name": "Vidyakirana Public School, Kothanur",
+        "name:kn": "ವಿದ್ಯಾಕಿರಣ ಪಬ್ಲಿಕ್ ಶಾಲೆ ಕೊತ್ತನೂರು",
+        "operator": "Private Un-Aided",
+        "school": "Higher primary"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5666966,
+          12.873081
+        ]
+      },
+      "properties": {
+        "addr:city": "Bangalore",
+        "addr:postcode": "560062",
+        "addr:street": "Amruth Nagar Main Road",
+        "amenity": "pharmacy",
+        "dispensing": "yes",
+        "drive_through": "no",
+        "healthcare": "pharmacy",
+        "name": "Netmeds",
+        "operator": "Reliance",
+        "website": "https://www.netmeds.com/"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5666746,
+          12.8731205
+        ]
+      },
+      "properties": {
+        "addr:city": "Bangalore",
+        "addr:postcode": "560062",
+        "addr:street": "Amruth Nagar Main Road",
+        "amenity": "fast_food",
+        "brand": "Domino's",
+        "brand:wikidata": "Q839466",
+        "brand:wikipedia": "en:Domino's Pizza",
+        "cuisine": "pizza",
+        "drive_through": "no",
+        "name": "Domino's",
+        "name:kn": "ಡಾಮಿನೋಸ್",
+        "takeaway": "yes",
+        "website": "https://pizzaonline.dominos.co.in/"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5663573,
+          12.8726746
+        ]
+      },
+      "properties": {
+        "addr:city": "Bangalore",
+        "addr:postcode": "560062",
+        "addr:street": "Anjanapura 60 Feet Road",
+        "amenity": "pharmacy",
+        "dispensing": "yes",
+        "drive_through": "no",
+        "healthcare": "pharmacy",
+        "name": "Best Medical and General Store"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.572777,
+          12.8546631
+        ]
+      },
+      "properties": {
+        "amenity": "shelter",
+        "shelter_type": "gazebo"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5632472,
+          12.864281
+        ]
+      },
+      "properties": {
+        "amenity": "restaurant",
+        "contact:instagram": "sas.ive",
+        "name": "Sasive",
+        "website": "https://sasive.in/"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.576331,
+          12.8714758
+        ]
+      },
+      "properties": {
+        "amenity": "restaurant",
+        "name": "The Mansion"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5550903,
+          12.8559909
+        ]
+      },
+      "properties": {
+        "addr:city": "Anjanapura",
+        "addr:district": "Bengaluru",
+        "addr:postcode": "560062",
+        "addr:street": "80 Feet Road",
+        "amenity": "events_venue",
+        "name": "KBL Saarang",
+        "website": "https://kblsaarang.com"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.576084,
+          12.8699117
+        ]
+      },
+      "properties": {
+        "amenity": "bank",
+        "atm": "yes",
+        "brand": "HDFC Bank",
+        "brand:wikidata": "Q631047",
+        "drive_through": "no",
+        "name": "HDFC Bank",
+        "short_name": "HDFC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.583156,
+          12.8713791
+        ]
+      },
+      "properties": {
+        "amenity": "bank",
+        "atm": "yes",
+        "brand": "Axis Bank",
+        "brand:wikidata": "Q2003549",
+        "drive_through": "no",
+        "name": "Axis Bank",
+        "opening_hours": "Mo-Fr 09:30-3:30"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5834317,
+          12.8716311
+        ]
+      },
+      "properties": {
+        "addr:city": "Bengaluru",
+        "addr:district": "Bengaluru Urban",
+        "addr:housenumber": "7",
+        "addr:postcode": "560076",
+        "addr:street": "Kothnur Main Road, Krishnanagar, Shreya Colony, Kothnur,  J. P. Nagar 8th Phase, Karnataka",
+        "amenity": "bank",
+        "atm": "yes",
+        "brand": "State Bank of India",
+        "brand:wikidata": "Q1340361",
+        "drive_through": "no",
+        "name": "State Bank of India",
+        "opening_hours": "Mo-Sa 09:30-15:30",
+        "operator": "SBI",
+        "short_name": "SBI"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5696132,
+          12.8715697
+        ]
+      },
+      "properties": {
+        "amenity": "cafe",
+        "name": "Tea & cigarette stall"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5718585,
+          12.8737909
+        ]
+      },
+      "properties": {
+        "amenity": "bank",
+        "atm": "yes",
+        "brand": "Axis Bank",
+        "brand:wikidata": "Q2003549",
+        "drive_through": "no",
+        "name": "Axis Bank"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5760581,
+          12.8715628
+        ]
+      },
+      "properties": {
+        "amenity": "police",
+        "operational_status": "needs_maintenance",
+        "operator": "Bengaluru Police - Konankunte Beat"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5711752,
+          12.872223
+        ]
+      },
+      "properties": {
+        "access": "private",
+        "amenity": "parking_entrance",
+        "parking": "underground"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5724157,
+          12.8720674
+        ]
+      },
+      "properties": {
+        "access": "private",
+        "amenity": "parking_entrance",
+        "parking": "underground"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.5731064,
+          12.8722968
+        ]
+      },
+      "properties": {
+        "access": "private",
+        "amenity": "parking_entrance",
+        "parking": "underground"
+      }
+    }
+  ]
+}

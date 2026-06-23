@@ -1,0 +1,5 @@
+https://forms.gle/LvpYWPpMa8ptt8k4A
+
+Smart Layout Map
+
+My residential layout lacks any publicly accessible digital map. Residents, delivery personnel, and visitors frequently have difficulty navigating it, and there is no record of the green cover (trees) in the area. I want to create an interactive web map that documents roads, landmarks, and trees — giving the community a navigation tool while also creating a baseline record of existing green cover that can be used to monitor changes over time.
