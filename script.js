@@ -29,6 +29,42 @@ let layoutBoundaryLine = null;
 
 const searchIndex = [];
 
+const stats = {
+
+    layoutArea:0,
+
+    buildingCount:0,
+
+    parkCount:0,
+
+    greenArea:62000,
+
+    satelliteDate:"Apr 2026"
+
+};
+
+function updateStats(){
+
+    document.getElementById("stat-area").textContent =
+        (stats.layoutArea/10000).toFixed(2)+" ha";
+
+    document.getElementById("stat-buildings").textContent =
+        stats.buildingCount;
+
+    document.getElementById("stat-parks").textContent =
+        stats.parkCount;
+
+    const pct =
+        stats.greenArea/stats.layoutArea*100;
+
+    document.getElementById("stat-green").textContent =
+        pct.toFixed(1)+"%";
+
+    document.getElementById("stat-date").textContent =
+        stats.satelliteDate;
+
+}
+
 function closeRing(coords) {
 
     const ring = [...coords];
@@ -103,6 +139,8 @@ async function loadBounds() {
 
     const ring = closeRing(coords);
     layoutPolygon = turf.polygon([ring]);
+    stats.layoutArea = turf.area(layoutPolygon);
+    updateStats();
     layoutBoundaryLine = turf.polygonToLine(layoutPolygon);
 
     const boundary = L.polygon(
@@ -214,6 +252,8 @@ async function loadBuildings() {
     const geojson = await (
         await fetch("data/buildings.geojson")
     ).json();
+    stats.buildingCount = geojson.features.length;
+    updateStats();
 
     let count = 1;
     L.geoJSON(geojson, {
@@ -292,6 +332,8 @@ async function loadParks() {
     const geojson = await (
         await fetch("data/parks.geojson")
     ).json();
+    stats.parkCount = geojson.features.length;
+    updateStats();
 
     let count = 1;
     L.geoJSON(geojson, {
