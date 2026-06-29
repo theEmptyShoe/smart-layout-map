@@ -415,51 +415,31 @@ body {
 }
 
 .stats-grid{
-
     display:grid;
-
     grid-template-columns:1fr 1fr;
-
     gap:8px;
-
     padding:12px 20px 20px;
-
 }
 
 .stat-card{
-
     background:var(--bg);
-
     border:1px solid var(--panel-border);
-
     border-radius:8px;
-
     padding:12px;
-
 }
 
 .stat-card .label{
-
     font-size:10px;
-
     text-transform:uppercase;
-
     color:var(--muted);
-
     letter-spacing:.08em;
-
     margin-bottom:6px;
 
 }
 
 .stat-card .value{
-
     font-family:"Syne",sans-serif;
-
     font-size:20px;
-
     font-weight:700;
-
     color:var(--green);
-
 }

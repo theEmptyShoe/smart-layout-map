@@ -43,9 +43,9 @@ function updateStats(){
     document.getElementById("stat-buildings").textContent = stats.buildingCount;
     document.getElementById("stat-parks").textContent = stats.parkCount;
     document.getElementById("stat-green").textContent = stats.greenArea + " ha";
-    document.getElementById("stat-green%").textContent = (stats.greenArea / stats.layoutArea).toFixed(1)+"%";
+    document.getElementById("stat-green%").textContent = (100 * stats.greenArea / stats.layoutArea).toFixed(1)+"%";
     document.getElementById("stat-dense").textContent = stats.denseCanopyArea + " ha";
-    document.getElementById("stat-dense%").textContent = (stats.denseCanopyArea / stats.layoutArea).toFixed(1)+"%";
+    document.getElementById("stat-dense%").textContent = (100 * stats.denseCanopyArea / stats.layoutArea).toFixed(1)+"%";
     document.getElementById("stat-date").textContent = stats.satelliteDate;
 }
 
@@ -123,7 +123,7 @@ async function loadBounds() {
 
     const ring = closeRing(coords);
     layoutPolygon = turf.polygon([ring]);
-    stats.layoutArea = turf.area(layoutPolygon);
+    stats.layoutArea = +((turf.area(layoutPolygon) / 10000).toFixed(4));
     updateStats();
     layoutBoundaryLine = turf.polygonToLine(layoutPolygon);
 
