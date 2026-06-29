@@ -30,39 +30,23 @@ let layoutBoundaryLine = null;
 const searchIndex = [];
 
 const stats = {
-
-    layoutArea:0,
-
-    buildingCount:0,
-
-    parkCount:0,
-
-    greenArea:62000,
-
-    satelliteDate:"Apr 2026"
-
+    layoutArea: 36.3228,
+    buildingCount: 0,  // loaded later
+    parkCount: 0,  // loaded later
+    greenArea: 27.917,
+    denseCanopyArea: 15.93,
+    satelliteDate: "2026-02-01"
 };
 
 function updateStats(){
-
-    document.getElementById("stat-area").textContent =
-        (stats.layoutArea/10000).toFixed(2)+" ha";
-
-    document.getElementById("stat-buildings").textContent =
-        stats.buildingCount;
-
-    document.getElementById("stat-parks").textContent =
-        stats.parkCount;
-
-    const pct =
-        stats.greenArea/stats.layoutArea*100;
-
-    document.getElementById("stat-green").textContent =
-        pct.toFixed(1)+"%";
-
-    document.getElementById("stat-date").textContent =
-        stats.satelliteDate;
-
+    document.getElementById("stat-area").textContent = stats.layoutArea + " ha";
+    document.getElementById("stat-buildings").textContent = stats.buildingCount;
+    document.getElementById("stat-parks").textContent = stats.parkCount;
+    document.getElementById("stat-green").textContent = stats.greenArea + " ha";
+    document.getElementById("stat-green%").textContent = (stats.greenArea / stats.layoutArea).toFixed(1)+"%";
+    document.getElementById("stat-dense").textContent = stats.denseCanopyArea + " ha";
+    document.getElementById("stat-dense%").textContent = (stats.denseCanopyArea / stats.layoutArea).toFixed(1)+"%";
+    document.getElementById("stat-date").textContent = stats.satelliteDate;
 }
 
 function closeRing(coords) {
