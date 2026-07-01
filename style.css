@@ -443,3 +443,23 @@ body {
     font-weight:700;
     color:var(--green);
 }
+
+.popup-table{
+    margin-top:8px;
+    border-collapse:collapse;
+    width:100%;
+}
+
+.popup-table td{
+    padding:4px 0;
+    font-size:12px;
+}
+
+.popup-table td:first-child{
+    color:var(--muted);
+    padding-right:18px;
+}
+
+.leaflet-interactive{
+    cursor:pointer;
+}

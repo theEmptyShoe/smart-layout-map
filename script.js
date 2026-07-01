@@ -31,8 +31,8 @@ const searchIndex = [];
 
 const stats = {
     layoutArea: 36.3228,
-    buildingCount: 0,  // loaded later
-    parkCount: 0,  // loaded later
+    buildingCount: 0, 
+    parkCount: 0, 
     greenArea: 27.917,
     denseCanopyArea: 15.93,
     satelliteDate: "2026-02-01"
@@ -50,7 +50,6 @@ function updateStats(){
 }
 
 function closeRing(coords) {
-
     const ring = [...coords];
     const first = ring[0];
     const last = ring[ring.length - 1];
@@ -114,6 +113,32 @@ function searchFeature(query) {
     if (!item) return;
     map.setView(item.latlng, 19);
     item.layer.openPopup();
+}
+
+/** * Utility to force closed LineStrings into true Polygons 
+ * This prevents turf.area() from outputting 0 and fixes Leaflet inner fill selection
+ */
+function fixGeoJSONPolygons(geojson) {
+    turf.featureEach(geojson, feature => {
+        if (feature.geometry && feature.geometry.type === "LineString") {
+            let coords = feature.geometry.coordinates;
+            // A valid polygon needs at least 3 points.
+            if (coords.length >= 3) {
+                const first = coords[0];
+                const last = coords[coords.length - 1];
+                // Ensure the ring is closed
+                if (first[0] !== last[0] || first[1] !== last[1]) {
+                    coords = [...coords, [first[0], first[1]]];
+                }
+                // Once closed, it must have at least 4 coordinates to be a valid Turf polygon
+                if (coords.length >= 4) {
+                    feature.geometry.type = "Polygon";
+                    feature.geometry.coordinates = [coords];
+                }
+            }
+        }
+    });
+    return geojson;
 }
 
 async function loadBounds() {
@@ -205,7 +230,6 @@ function clipRoadFeature(feature) {
 }
 
 async function loadRoads() {
-
     const geojson = await (
         await fetch("data/roads.geojson")
     ).json();
@@ -228,43 +252,125 @@ async function loadRoads() {
             }
         }
     ).addTo(roadLayer);
-
-
 }
 
 async function loadBuildings() {
-    const geojson = await (
+    let geojson = await (
         await fetch("data/buildings.geojson")
     ).json();
-    stats.buildingCount = geojson.features.length;
+
+    // Fix incorrect LineStrings into Polygons before calculating areas
+    geojson = fixGeoJSONPolygons(geojson);
+
+    const insideBuildings = geojson.features.filter(feature =>
+        turf.booleanWithin(feature, layoutPolygon)
+    );
+    
+    stats.buildingCount = insideBuildings.length;
     updateStats();
 
     let count = 1;
-    L.geoJSON(geojson, {
-        style: {
-            color: "#58a6ff",
-            weight: 1.3,
-            opacity: 0.75,
-            fillOpacity: 0.08
+
+    L.geoJSON({
+        type: "FeatureCollection",
+        features: insideBuildings
+    }, {
+        style() {
+            return {
+                color: "#7ec8ff",
+                weight: 1.2,
+                opacity: 1,
+                fill: true, // Forces Leaflet to consider the fill area interactive
+                fillColor: "#58a6ff",
+                fillOpacity: 0.35,
+                interactive: true
+            };
         },
 
         onEachFeature(feature, layer) {
-            const name = safePopupName(
-                feature.properties,
-                `Building ${count++}`
-            );
-            bindFeaturePopup(
-                layer,
-                name,
-                "Building",
-                "building"
-            );
-            addSearchEntry(name, layer);
+            let area = 0;
+            let perimeter = null;
+            let center = [0, 0];
+            
+            area = turf.area(feature);
+            center = turf.centroid(feature).geometry.coordinates;
+            
+            try {
+                perimeter = turf.length(
+                    turf.polygonToLine(feature),
+                    { units: "meters" }
+                );
+            } catch(e) {
+                perimeter = 0; // Fallback in case of weird geometries
+            }
+
+            let size;
+
+            if (area < 100)
+                size = "Small";
+            else if (area < 400)
+                size = "Medium";
+            else
+                size = "Large";
+
+            layer.bindPopup(`
+                <div class="popup-name">
+                    🏢 Building ${count++}
+                </div>
+                <span class="popup-badge building">
+                    Building
+                </span>
+                <table class="popup-table">
+                    <tr>
+                        <td>Size</td>
+                        <td>${size}</td>
+                    </tr>
+                    <tr>
+                        <td>Footprint</td>
+                        <td>${area.toFixed(0)} m²</td>
+                    </tr>
+                    ${
+                        perimeter !== null
+                        ? `<tr>
+                                <td>Perimeter</td>
+                                <td>${perimeter.toFixed(1)} m</td>
+                        </tr>`
+                        : ""
+                    }
+                    <tr>
+                        <td>Latitude</td>
+                        <td>${center[1].toFixed(6)}</td>
+                    </tr>
+                    <tr>
+                        <td>Longitude</td>
+                        <td>${center[0].toFixed(6)}</td>
+                    </tr>
+                </table>
+            `);
+
+            layer.on({
+                mouseover() {
+                    layer.setStyle({
+                        color: "#ffffff",
+                        fillColor: "#7ec8ff",
+                        fillOpacity: 0.6,
+                        weight: 2
+                    });
+                    layer.bringToFront();
+                },
+                mouseout() {
+                    layer.setStyle({
+                        color: "#7ec8ff",
+                        fillColor: "#58a6ff",
+                        fillOpacity: 0.35,
+                        weight: 1.2
+                    });
+                }
+            });
+
+            addSearchEntry(`Building ${count - 1}`, layer);
         }
-
     }).addTo(buildingLayer);
-
-
 }
 
 async function loadAmenities() {
@@ -274,7 +380,6 @@ async function loadAmenities() {
 
     let count = 1;
     L.geoJSON(geojson, {
-
         pointToLayer(feature, latlng) {
             return L.circleMarker(latlng, {
                 radius: 6,
@@ -282,17 +387,14 @@ async function loadAmenities() {
                 weight: 2,
                 fillColor: "#58a6ff",
                 fillOpacity: 0.9
-
             });
         },
-
         style: {
             color: "#58a6ff",
             weight: 1.2,
             opacity: 0.8,
             fillOpacity: 0.12
         },
-
         onEachFeature(feature, layer) {
             const name = safePopupName(
                 feature.properties,
@@ -306,16 +408,17 @@ async function loadAmenities() {
             );
             addSearchEntry(name, layer);
         }
-
     }).addTo(amenityLayer);
-
-
 }
 
 async function loadParks() {
-    const geojson = await (
+    let geojson = await (
         await fetch("data/parks.geojson")
     ).json();
+    
+    // Convert enclosed LineStrings to Polygons
+    geojson = fixGeoJSONPolygons(geojson);
+
     stats.parkCount = geojson.features.length;
     updateStats();
 
@@ -324,43 +427,94 @@ async function loadParks() {
         style: {
             color: "#3fb950",
             weight: 2,
+            fill: true,
             fillColor: "#3fb950",
-            fillOpacity: 0.18
-
+            fillOpacity: 0.18,
+            interactive: true
         },
-
         onEachFeature(feature, layer) {
             const name = safePopupName(
                 feature.properties,
                 `Park ${count++}`
             );
-            bindFeaturePopup(
-                layer,
-                name,
-                "Park",
-                "park"
-            );
+
+            const area = turf.area(feature);
+
+            let perimeter = 0;
+
+            try {
+                perimeter = turf.length(
+                    turf.polygonToLine(feature),
+                    { units: "meters" }
+                );
+            }
+            catch {
+                perimeter = null;
+            }
+
+            layer.bindPopup(`
+                <div class="popup-name">${name}</div>
+
+                <span class="popup-badge park">
+                    Park
+                </span>
+
+                <table class="popup-table">
+
+                    <tr>
+                        <td>Area</td>
+                        <td>${area.toFixed(0)} m²</td>
+                    </tr>
+
+                    ${
+                        perimeter !== null ?
+                        `<tr>
+                            <td>Perimeter</td>
+                            <td>${perimeter.toFixed(1)} m</td>
+                        </tr>`
+                        : ""
+                    }
+
+                </table>
+            `);
+
             addSearchEntry(name, layer);
         }
-
     }).addTo(parkLayer);
-
-
 }
 
 async function loadNatural() {
-    const geojson = await (
+    let geojson = await (
         await fetch("data/natural.geojson")
     ).json();
+    
+    // Convert enclosed LineStrings to Polygons
+    geojson = fixGeoJSONPolygons(geojson);
+
+    let count = 1;
 
     L.geoJSON(geojson, {
         style: {
             color: "#8b949e",
             weight: 1.5,
+            fill: true,
             fillColor: "#8b949e",
-            fillOpacity: 0.12
+            fillOpacity: 0.12,
+            interactive: true
+        },
+        onEachFeature(feature, layer) {
+            const name = safePopupName(
+                feature.properties,
+                `Natural Feature ${count++}`
+            );
+            bindFeaturePopup(
+                layer,
+                name,
+                "Natural",
+                "natural"
+            );
+            addSearchEntry(name, layer);
         }
-
     }).addTo(naturalLayer);
 }
 
@@ -372,7 +526,6 @@ const layerMap = {
     parks: parkLayer,
     natural: naturalLayer,
     boundary: boundaryLayer
-
 };
 
 const layerState = {};

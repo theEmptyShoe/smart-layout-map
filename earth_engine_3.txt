@@ -1,0 +1,140 @@
+// ===============================
+// TREE STATISTICS ESTIMATOR
+// ===============================
+
+// Draw/import your polygon as "roi"
+
+Map.centerObject(roi, 17);
+
+// -----------------------------
+// Sentinel-2
+// -----------------------------
+
+var image = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+    .filterBounds(roi)
+    .filterDate("2025-01-01", "2025-12-31")
+    .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE",10))
+    .median()
+    .clip(roi);
+
+// -----------------------------
+// NDVI
+// -----------------------------
+
+var ndvi = image.normalizedDifference(["B8","B4"]).rename("NDVI");
+
+Map.addLayer(
+    ndvi,
+    {
+        min:0,
+        max:0.8,
+        palette:["brown","yellow","green","darkgreen"]
+    },
+    "NDVI"
+);
+
+// -----------------------------
+// Tree Canopy
+// NDVI > 0.55
+// -----------------------------
+
+var canopy = ndvi.gt(0.55);
+
+Map.addLayer(
+    canopy.selfMask(),
+    {palette:["00FF00"]},
+    "Canopy"
+);
+
+// -----------------------------
+// Canopy Area
+// -----------------------------
+
+var canopyArea = canopy.multiply(
+    ee.Image.pixelArea()
+).reduceRegion({
+    reducer:ee.Reducer.sum(),
+    geometry:roi,
+    scale:10,
+    maxPixels:1e10
+});
+
+var canopy_m2 =
+    ee.Number(canopyArea.get("NDVI"));
+
+var canopy_ha =
+    canopy_m2.divide(10000);
+
+// -----------------------------
+// Layout Area
+// -----------------------------
+
+var layoutArea =
+    roi.area().divide(10000);
+
+// -----------------------------
+// Average Crown Size
+// -----------------------------
+
+var averageTreeCrown = 25; // m²
+
+var estimatedTrees =
+    canopy_m2.divide(averageTreeCrown);
+
+// -----------------------------
+// Tree Density
+// -----------------------------
+
+var density =
+    estimatedTrees.divide(layoutArea);
+
+// -----------------------------
+// Carbon
+// -----------------------------
+
+// Average mature tree
+// ~22 kg CO2/year
+
+var carbon =
+    estimatedTrees.multiply(22);
+
+// -----------------------------
+// Oxygen
+// -----------------------------
+
+// ~118 kg oxygen/year
+
+var oxygen =
+    estimatedTrees.multiply(118);
+
+// -----------------------------
+// Print
+// -----------------------------
+
+print("Layout Area (ha)",layoutArea);
+
+print("Canopy Area (ha)",canopy_ha);
+
+print("Estimated Trees",
+      estimatedTrees.round());
+
+print("Tree Density (trees/ha)",
+      density.round());
+
+print("Estimated Carbon (kg/year)",
+      carbon.round());
+
+print("Estimated Oxygen (kg/year)",
+      oxygen.round());
+
+// -----------------------------
+// Export canopy raster
+// -----------------------------
+
+Export.image.toDrive({
+    image:canopy,
+    description:"tree_canopy",
+    region:roi,
+    scale:10,
+    maxPixels:1e13
+});
