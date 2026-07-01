@@ -24,6 +24,9 @@ const amenityLayer = L.layerGroup().addTo(map);
 const parkLayer = L.layerGroup().addTo(map);
 const naturalLayer = L.layerGroup().addTo(map);
 
+let ndviOverlay = null;
+let currentYear = 2026;
+
 let layoutPolygon = null;
 let layoutBoundaryLine = null;
 
@@ -47,6 +50,28 @@ function updateStats(){
     document.getElementById("stat-dense").textContent = stats.denseCanopyArea + " ha";
     document.getElementById("stat-dense%").textContent = (100 * stats.denseCanopyArea / stats.layoutArea).toFixed(1)+"%";
     document.getElementById("stat-date").textContent = stats.satelliteDate;
+}
+
+async function loadNDVIYear(year) {
+    currentYear = year;
+    if (ndviOverlay) ndviLayer.removeLayer(ndviOverlay);
+
+    const bounds = await (
+        await fetch("data/ndvi_bounds.json")
+    ).json();
+
+    ndviOverlay = L.imageOverlay(
+        `data/ndvi_imgs_hd/NDVI_${year}.png`,
+        bounds,
+        {
+            opacity: 0.38,
+            interactive: false
+        }
+    );
+
+    ndviOverlay.addTo(ndviLayer);
+    const label = document.getElementById("ndvi-year-label");
+    if (label) label.textContent = year;
 }
 
 function closeRing(coords) {
@@ -162,18 +187,7 @@ async function loadBounds() {
         }
     ).addTo(boundaryLayer);
 
-    const ndviBounds = await (
-        await fetch("data/ndvi_bounds.json")
-    ).json();
-
-    L.imageOverlay(
-        "data/ndvi.png",
-        ndviBounds,
-        {
-            opacity: 0.35,
-            interactive: false
-        }
-    ).addTo(ndviLayer);
+    await loadNDVIYear(2026);
 
     map.fitBounds(boundary.getBounds(), {
         padding: [40, 40]
@@ -378,8 +392,31 @@ async function loadAmenities() {
         await fetch("data/amenities.geojson")
     ).json();
 
+    const insideAmenities = geojson.features.filter(feature => {
+        try {
+            if (feature.geometry.type === "Point") {
+                return turf.booleanPointInPolygon(
+                    feature,
+                    layoutPolygon
+                );
+            }
+
+            return turf.booleanWithin(
+                feature,
+                layoutPolygon
+            );
+
+        }
+        catch {
+            return false;
+        }
+    });
+
     let count = 1;
-    L.geoJSON(geojson, {
+    L.geoJSON({
+        type: "FeatureCollection",
+        features: insideAmenities
+    }, {
         pointToLayer(feature, latlng) {
             return L.circleMarker(latlng, {
                 radius: 6,
@@ -419,11 +456,24 @@ async function loadParks() {
     // Convert enclosed LineStrings to Polygons
     geojson = fixGeoJSONPolygons(geojson);
 
-    stats.parkCount = geojson.features.length;
+    const insideParks = geojson.features.filter(feature => {
+        try {
+            return turf.booleanWithin(feature, layoutPolygon);
+        }
+        catch {
+            return false;
+        }
+    });
+
+    stats.parkCount = insideParks.length;
     updateStats();
 
     let count = 1;
-    L.geoJSON(geojson, {
+
+    L.geoJSON({
+        type: "FeatureCollection",
+        features: insideParks
+    }, {
         style: {
             color: "#3fb950",
             weight: 2,
@@ -601,3 +651,31 @@ function toggleLayer(id) {
         document.body.style.userSelect = "";
     });
 })();
+
+function updateTimelineLabel() {
+    const slider = document.getElementById("ndvi-slider");
+    const label = document.getElementById("ndvi-year-label");
+    if (!slider || !label) return;
+
+    const min = +slider.min || 2005;
+    const max = +slider.max || 2026;
+    const val = +slider.value || 2026;
+
+    const percent = ((val - min) / (max - min)) * 100;
+    label.textContent = val;
+    
+    // Centers the floating badge over the slider thumb
+    label.style.left = `calc(${percent}% + (${8 - percent * 0.16}px))`;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const slider = document.getElementById("ndvi-slider");
+    if (slider) {
+        slider.addEventListener("input", e => {
+            loadNDVIYear(Number(e.target.value));
+            updateTimelineLabel();
+        });
+    }
+
+    updateTimelineLabel();
+});

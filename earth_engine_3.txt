@@ -138,3 +138,9 @@ Export.image.toDrive({
     scale:10,
     maxPixels:1e13
 });
+
+// INFO:
+// Trees Estimate: 3863
+// Trees per ha: 106
+// Estimated Carbon (kg/year): 84992
+// Estimated Oxygen (kg/year): 455866
