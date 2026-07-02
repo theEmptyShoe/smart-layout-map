@@ -774,7 +774,7 @@ function initChart() {
     const greenCoverData = [55, 54.5, 54, 53, 56, 58, 60, 59, 62, 64, 65, 68, 70, 71, 72, 73, 73.5, 75, 75.8, 76.5, 76.8, 76.8];
     const denseCanopyData = [25, 24, 24, 23, 25, 27, 28, 28, 30, 31, 33, 35, 37, 38, 39, 40, 41, 42, 43, 43.5, 43.8, 43.8];
 
-    new Chart(ctx, {
+    window.coverChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
             labels: years,
@@ -887,3 +887,26 @@ document.addEventListener("DOMContentLoaded", () => {
     initChart();
     updateTimelineLabel();
 });
+
+// ── Chart popup toggle ──
+const chartPopup = document.getElementById('chart-popup');
+const chartFab   = document.getElementById('chart-fab');
+const popupClose = document.getElementById('popup-close');
+
+function toggleChartPopup(show) {
+    if (typeof show === 'boolean') {
+        chartPopup.classList.toggle('visible', show);
+    } else {
+        chartPopup.classList.toggle('visible');
+    }
+
+    // Give the panel time to finish its slide transition, then resize the chart
+    setTimeout(() => {
+        if (window.coverChartInstance && window.coverChartInstance.resize) {
+            window.coverChartInstance.resize();
+        }
+    }, 400); // matches the CSS transition duration
+}
+
+chartFab.addEventListener('click', () => toggleChartPopup());
+popupClose.addEventListener('click', () => toggleChartPopup(false));

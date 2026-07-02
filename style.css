@@ -570,25 +570,92 @@ body {
     letter-spacing: 0.05em;
 }
 
-/* ---------------- Chart Container ---------------- */
-.chart-container {
-    margin: 8px 20px 16px;
-    background: var(--bg);
-    border: 1px solid var(--panel-border);
-    border-radius: 8px;
-    padding: 12px 14px;
+/* ---------- Floating Action Button ---------- */
+.fab-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--green-dim);          /* dark green tint */
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.chart-container .legend-title {
-    font-size: 10px;
-    color: var(--muted);
+.fab-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+}
+
+/* ---------- Slide-in Chart Panel ---------- */
+.chart-popup {
+    position: fixed;
+    top: 0;
+    right: -420px;               /* hidden off-screen */
+    width: 380px;
+    height: 100%;
+    background: var(--panel);
+    border-left: 1px solid var(--panel-border);
+    z-index: 2000;
+    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -4px 0 24px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-popup.visible {
+    right: 0;                    /* slides into view */
+}
+
+.popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 8px;
+    border-bottom: 1px solid var(--panel-border);
+}
+
+.popup-title {
+    font-size: 12px;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 12px;
+    color: var(--muted);
 }
 
-.chart-wrapper {
-    position: relative;
-    height: 160px; /* Fixed height for the chart */
-    width: 100%;
+.popup-close {
+    background: none;
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.popup-close:hover {
+    background: var(--bg);
+    color: var(--red);
+    border-color: var(--red);
+}
+
+/* Override the chart-wrapper inside the popup to use full height */
+.chart-popup .chart-wrapper {
+    flex: 1;
+    padding: 12px 16px 16px;
+    height: auto;                /* let flex decide */
 }

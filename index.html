@@ -134,13 +134,6 @@
             </div>
         </div>
 
-        <div class="chart-container">
-            <div class="legend-title">Cover Trends (2005–2026)</div>
-            <div class="chart-wrapper">
-                <canvas id="coverChart"></canvas>
-            </div>
-        </div>
-
         <div class="section-label">Tools</div>
         <div class="tools-grid">
             <button class="tool-btn" id="btn-measure-dist" onclick="setMeasureMode('distance')">📏 Distance</button>
@@ -161,6 +154,20 @@
 
     <div id="sidebar-resize" title="Drag to resize"></div>
     <div id="map"></div>
+
+    <!-- Floating Action Button -->
+    <button id="chart-fab" class="fab-button" title="Show Trend Chart">📊</button>
+
+    <!-- Slide-in chart panel -->
+    <div id="chart-popup" class="chart-popup">
+        <div class="popup-header">
+            <span class="popup-title">Cover Trends (2005–2026)</span>
+            <button class="popup-close" id="popup-close">✕</button>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="coverChart"></canvas>
+        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
