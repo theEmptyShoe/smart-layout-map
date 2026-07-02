@@ -97,6 +97,31 @@ function layerCenter(layer) {
     return null;
 }
 
+// Generic hover styling
+
+function enablePolygonHover(layer, normalStyle, hoverStyle) {
+    layer.on({
+        mouseover() {
+            layer.setStyle(hoverStyle);
+            layer.bringToFront();
+        },
+        mouseout() {
+            layer.setStyle(normalStyle);
+        }
+    });
+}
+
+function enableCircleHover(layer, normalStyle, hoverStyle) {
+    layer.on({
+        mouseover() {
+            layer.setStyle(hoverStyle);
+        },
+        mouseout() {
+            layer.setStyle(normalStyle);
+        }
+    });
+}
+
 function safePopupName(properties = {}, fallback) {
     return (
         properties.name ||
@@ -268,6 +293,8 @@ async function loadRoads() {
     ).addTo(roadLayer);
 }
 
+let hoveredBuilding = null;
+
 async function loadBuildings() {
     let geojson = await (
         await fetch("data/buildings.geojson")
@@ -362,24 +389,16 @@ async function loadBuildings() {
                 </table>
             `);
 
-            layer.on({
-                mouseover() {
-                    layer.setStyle({
-                        color: "#ffffff",
-                        fillColor: "#7ec8ff",
-                        fillOpacity: 0.6,
-                        weight: 2
-                    });
-                    layer.bringToFront();
-                },
-                mouseout() {
-                    layer.setStyle({
-                        color: "#7ec8ff",
-                        fillColor: "#58a6ff",
-                        fillOpacity: 0.35,
-                        weight: 1.2
-                    });
-                }
+            enablePolygonHover(layer, {
+                color: "#7ec8ff",
+                fillColor: "#58a6ff",
+                fillOpacity: 0.35,
+                weight: 1.2
+            }, {
+                color: "#ffffff",
+                fillColor: "#7ec8ff",
+                fillOpacity: 0.6,
+                weight: 2
             });
 
             addSearchEntry(`Building ${count - 1}`, layer);
@@ -443,10 +462,31 @@ async function loadAmenities() {
                 "Amenity",
                 "amenity"
             );
+
+            enableCircleHover(
+                layer,
+                {
+                    radius: 6,
+                    color: "#a5d6ff",
+                    weight: 2,
+                    fillColor: "#58a6ff",
+                    fillOpacity: 0.9
+                },
+                {
+                    radius: 8,
+                    color: "#ffffff",
+                    weight: 3,
+                    fillColor: "#58a6ff",
+                    fillOpacity: 1
+                }
+            );
+
             addSearchEntry(name, layer);
         }
     }).addTo(amenityLayer);
 }
+
+let parkFeatures = [];
 
 async function loadParks() {
     let geojson = await (
@@ -465,6 +505,7 @@ async function loadParks() {
         }
     });
 
+    parkFeatures = insideParks;
     stats.parkCount = insideParks.length;
     updateStats();
 
@@ -528,9 +569,46 @@ async function loadParks() {
                 </table>
             `);
 
+            enablePolygonHover(
+                layer,
+                {
+                    color: "#3fb950",
+                    fillColor: "#3fb950",
+                    fillOpacity: 0.18,
+                    weight: 2
+                },
+                {
+                    color: "#ffffff",
+                    fillColor: "#3fb950",
+                    fillOpacity: 0.45,
+                    weight: 3
+                }
+            );
+
             addSearchEntry(name, layer);
         }
     }).addTo(parkLayer);
+}
+
+function nearestParkDistance(building) {
+    const centroid = turf.centroid(building);
+    let min = Infinity;
+
+    for (const park of parkFeatures) {
+        const nearest = turf.nearestPointOnLine(
+            turf.polygonToLine(park),
+            centroid
+        );
+
+        const d = turf.distance(
+            centroid,
+            nearest,
+            { units: "meters" }
+        );
+
+        if (d < min) min = d;
+    }
+    return min;
 }
 
 async function loadNatural() {
@@ -563,6 +641,23 @@ async function loadNatural() {
                 "Natural",
                 "natural"
             );
+
+            enablePolygonHover(
+                layer,
+                {
+                    color: "#8b949e",
+                    fillColor: "#8b949e",
+                    fillOpacity: 0.12,
+                    weight: 1.5
+                },
+                {
+                    color: "#ffffff",
+                    fillColor: "#8b949e",
+                    fillOpacity: 0.35,
+                    weight: 2.5
+                }
+            );
+
             addSearchEntry(name, layer);
         }
     }).addTo(naturalLayer);
@@ -668,6 +763,119 @@ function updateTimelineLabel() {
     label.style.left = `calc(${percent}% + (${8 - percent * 0.16}px))`;
 }
 
+// HISTORICAL CHART INITIALIZATION
+function initChart() {
+    const ctx = document.getElementById('coverChart');
+    if (!ctx) return;
+
+    // Years 2005 to 2026
+    const years = Array.from({length: 22}, (_, i) => 2005 + i);
+
+    const greenCoverData = [55, 54.5, 54, 53, 56, 58, 60, 59, 62, 64, 65, 68, 70, 71, 72, 73, 73.5, 75, 75.8, 76.5, 76.8, 76.8];
+    const denseCanopyData = [25, 24, 24, 23, 25, 27, 28, 28, 30, 31, 33, 35, 37, 38, 39, 40, 41, 42, 43, 43.5, 43.8, 43.8];
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: 'Green Cover',
+                    data: greenCoverData,
+                    borderColor: '#39ff14', // Neon Green
+                    backgroundColor: 'rgba(57, 255, 20, 0.05)',
+                    borderWidth: 2,
+                    tension: 0.3, // Smooth curves
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                    fill: true
+                },
+                {
+                    label: 'Dense Canopy',
+                    data: denseCanopyData,
+                    borderColor: '#1e5230', // Deeper forest green for contrast
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                    borderDash: [4, 4], // Dashed line to differentiate easily
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: '#8b949e',
+                        usePointStyle: true,
+                        pointStyle: 'rect',
+                        boxWidth: 8,
+                        boxHeight: 8,
+                        font: {
+                            family: "'Space Grotesk', sans-serif",
+                            size: 10
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    titleColor: '#e6edf3',
+                    bodyColor: '#e6edf3',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    padding: 8,
+                    bodyFont: { family: "'Space Grotesk', sans-serif" },
+                    titleFont: { family: "'Space Grotesk', sans-serif" },
+                    callbacks: {
+                        label: (context) => ` ${context.dataset.label}: ${context.parsed.y}%`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: 'rgba(139, 148, 158, 0.1)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: '#8b949e',
+                        maxTicksLimit: 5, // Prevents X axis from looking cluttered
+                        font: {
+                            family: "'Space Grotesk', sans-serif",
+                            size: 9
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(139, 148, 158, 0.1)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: '#8b949e',
+                        font: {
+                            family: "'Space Grotesk', sans-serif",
+                            size: 9
+                        },
+                        callback: (value) => value + '%'
+                    },
+                    min: 0,
+                    max: 100
+                }
+            }
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const slider = document.getElementById("ndvi-slider");
     if (slider) {
@@ -676,6 +884,6 @@ document.addEventListener("DOMContentLoaded", () => {
             updateTimelineLabel();
         });
     }
-
+    initChart();
     updateTimelineLabel();
 });

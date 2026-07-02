@@ -569,3 +569,26 @@ body {
     font-weight: 500;
     letter-spacing: 0.05em;
 }
+
+/* ---------------- Chart Container ---------------- */
+.chart-container {
+    margin: 8px 20px 16px;
+    background: var(--bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 12px 14px;
+}
+
+.chart-container .legend-title {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 160px; /* Fixed height for the chart */
+    width: 100%;
+}

@@ -6,6 +6,7 @@
     <title>Royal Park Residency — Green Cover Map</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -130,6 +131,13 @@
             <div class="timeline-years">
                 <span>2005</span>
                 <span>2026</span>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="legend-title">Cover Trends (2005–2026)</div>
+            <div class="chart-wrapper">
+                <canvas id="coverChart"></canvas>
             </div>
         </div>
 
